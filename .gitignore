@@ -1,0 +1,44 @@
+# === Rust/Cargo ===
+**/target/
+**/Cargo.lock
+**/.cargo/
+
+# If you're using rustup
+.rustup/
+
+# === Editor & IDE files ===
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# IntelliJ / CLion / RustRover (JetBrains)
+.idea/
+*.iml
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# === OS Files ===
+.DS_Store
+Thumbs.db
+
+# === Logs, temp files ===
+*.log
+*.tmp
+
+# === Backup files ===
+*~
+*.bak
+*.swp
+
+# === By-products of tests or builds ===
+debug/
+release/
+benchmarks/
+*.rlib
+
+# === Workspace-specific files ===
+# (adjust these if you have a workspace-wide Cargo.lock that you want tracked)
+workspace/Cargo.lock
