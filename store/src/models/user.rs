@@ -1,11 +1,20 @@
-use crate::store::Store;
+use crate::{schema::user::password, store::Store};
+use diesel::prelude::*;
+#[derive(Queryable, Insertable)]
+#[diesel(table_name = crate::schema::user)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+pub struct User {
+    id: String,
+    username: String,
+    password: String
+}
 
 impl Store {
-    pub fn create_user(&self) {
-        println!("Create User Called");
+    pub fn sign_up(&self, username: String, password: String) {
+        
     }
 
-    pub fn get_user(&self) -> String {
-        String::from("1")
+    pub fn sign_in(&self, username: String, password: String) {
+
     }
 }

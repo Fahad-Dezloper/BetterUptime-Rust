@@ -1,9 +1,9 @@
 use poem::{
     get, handler, listener::TcpListener, post, web::{Json, Path}, Route, Server
 };
+use store::store::Store;
 
 use crate::{request_input::CreateWebsiteInput, request_output::CreateWebsiteOutput};
-use store::Store;
 
 pub mod request_input;
 pub mod request_output;
@@ -19,7 +19,7 @@ fn create_website(Json(data): Json<CreateWebsiteInput>) -> Json<CreateWebsiteOut
     print!("recived request");
     let url = data.url;
     // persist this in db
-    let s = Store{};
+    let s = Store::default();
     let id = s.create_website();
     s.create_user();
 

@@ -6,8 +6,8 @@ pub struct Store {
     pub conn: PgConnection
 }
 
-impl Default for Store {
-    fn default() -> Self {
+impl Store {
+    pub fn default() -> Self {
         let config = Config::default();
         let conn = PgConnection::establish(&config.database_url)
             .expect("Error connecting to database");
