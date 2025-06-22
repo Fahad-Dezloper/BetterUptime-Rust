@@ -1,11 +1,43 @@
-use crate::store::Store;
+use crate::{models::website, store::Store};
+use diesel::{prelude::*, types::{Date, TimeStamp}};
+use uuid::Uuid;
+use chrono::{NaiveDateTime, Utc};
+#[derive(Queryable, Insertable, Selectable)]
+#[derive(table_name = crate::schema::website)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
+
+pub struct Website {
+    pub id: String,
+    pub url: String,
+    pub user_id: String,
+    pub time_added: NaiveDateTime
+}
 
 impl Store {
-    pub fn create_website(&self) {
-        println!("Create User Called");
-    }
+    pub fn create_website(&mut self, user_id: String, url: String) -> Result<Website, diesel::result::Error> {
+        let id = Uuid::new_v4();
+        let website = Website {
+            user_id,
+            url,
+            id: id.to_string(),
+            time_added: Utc::now().naive_utc()
+        };
 
-    pub fn get_website(&self) -> String {
-        String::from("1")
+        let website = diesel::insert_into(crate::schema::website::table)
+            .values(&website)
+            .returning(Website::as_returning())
+            .get_result(&mut self.conn)?;
+
+        Ok(website)
+       }
+
+    pub fn get_website(&mut self, input_id: String) -> Result<Website, diesel::result::Error> {
+        use crate::schema::website::dsl::*;
+
+        let website_result = website::filter(id.eq(input_id))
+            .select(Website::as_select())
+            .first(&mut self.conn)?;
+
+        Ok(website_result)
     }
 }

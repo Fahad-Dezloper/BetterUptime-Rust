@@ -1,8 +1,10 @@
 use crate::{schema::user::password, store::Store};
-use diesel::prelude::*;
-#[derive(Queryable, Insertable)]
+use diesel::{prelude::*};
+use uuid::Uuid;
+#[derive(Queryable, Insertable, Selectable)]
 #[diesel(table_name = crate::schema::user)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
+
 pub struct User {
     id: String,
     username: String,
@@ -10,11 +12,32 @@ pub struct User {
 }
 
 impl Store {
-    pub fn sign_up(&self, username: String, password: String) {
+    pub fn sign_up(&mut self, username: String, password: String) -> Result<String, diesel::result::Error> {
+        let id = Uuid::new_v4();
+        let u = User {
+            username,
+            password,
+            id: id.to_string()
+        };
+        diesel::insert_into(crate::schema::user::table)
+            .values(records: &u)
+            .returning(User::as_returning())
+            .get_result(&mut self.conn)?;
         
+        Ok(id.to_string())
     }
 
-    pub fn sign_in(&self, username: String, password: String) {
+    pub fn sign_in(&mut self, input_username: String, input_password: String) -> Result<bool, diesel> {
+        use crate::schema::user::dsl::*;
+        let user_result = user
+            .filter(username.eq(input_username))
+            .select(User::as_select())
+            .first(&mut self.conn)?;
 
+        if user_result.password != input_password {
+            return Ok(false);
+        }
+
+        Ok(true);
     }
 }
